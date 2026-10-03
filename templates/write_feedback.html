@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}Feedback - Maham Project{% endblock %}
+{% block content %}
+<div class="card narrow">
+    <h2>Write Feedback</h2>
+    <p class="subtitle">Have a suggestion or an issue with the platform? Let the admin team know.</p>
+    <form method="POST">
+        <textarea name="message" placeholder="Your feedback..." required style="height:120px;"></textarea>
+        <button type="submit" class="full">Send Feedback</button>
+    </form>
+</div>
+{% endblock %}

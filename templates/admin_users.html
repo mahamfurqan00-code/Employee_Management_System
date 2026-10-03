@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Users - Admin{% endblock %}
+{% block content %}
+<div class="card wide">
+    <h2>Registered Users</h2>
+    {% if users %}
+    <table>
+        <thead><tr><th>Username</th><th>Email</th><th>Reviews Submitted</th></tr></thead>
+        <tbody>
+        {% for u in users %}
+            <tr>
+                <td>{{ u.username }}</td>
+                <td>{{ u.email }}</td>
+                <td>{{ u.reviews|length }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="empty-state">No users registered yet.</div>
+    {% endif %}
+</div>
+{% endblock %}

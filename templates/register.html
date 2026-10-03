@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}Register - Maham Project{% endblock %}
+{% block extra_style %}{% include "_auth_style.html" %}{% endblock %}
+{% block content %}
+<div class="orb rose"></div><div class="orb indigo"></div><div class="orb plum"></div>
+<div class="auth-stage">
+    <div class="card round" id="authCard">
+        <h2>Create Account</h2>
+        <p class="subtitle">Choose your account type. Admin accounts need an access code.</p>
+        <form method="POST">
+            <input type="text" name="username" placeholder="Full name" required>
+            <input type="email" name="email" placeholder="Email address" required>
+            <input type="password" name="password" placeholder="Password (min 6 characters)" minlength="6" required>
+            <select name="role" id="roleSelect" onchange="toggleAdminCode()">
+                <option value="user" selected>Register as: User</option>
+                <option value="admin">Register as: Admin</option>
+            </select>
+            <input type="text" name="admin_code" id="adminCodeField" placeholder="Admin access code" style="display:none;">
+            <button type="submit" class="full">Sign up</button>
+        </form>
+        <p class="subtitle" style="margin:20px 0 0;">Already registered? <a href="{{ url_for('login') }}">Sign in</a></p>
+    </div>
+</div>
+<script>
+    function toggleAdminCode() {
+        const isAdmin = document.getElementById('roleSelect').value === 'admin';
+        const field = document.getElementById('adminCodeField');
+        field.style.display = isAdmin ? 'block' : 'none';
+        field.required = isAdmin;
+    }
+</script>
+{% include "_auth_tilt.html" %}
+{% endblock %}

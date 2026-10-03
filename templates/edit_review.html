@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}Edit Review - Admin{% endblock %}
+{% block content %}
+<div class="card narrow">
+    <span class="cat" style="margin-left:0;">Admin Mode</span>
+    <h2>Edit App Review</h2>
+    <p class="subtitle">App: <strong>{{ review.application.name }}</strong></p>
+    <form method="POST">
+        <textarea name="review_text" required style="height:120px;">{{ review.review_text }}</textarea>
+        <button type="submit" class="full">Update &amp; Re-Analyze</button>
+    </form>
+    <a href="{{ url_for('admin_dashboard') }}" class="subtitle" style="display:inline-block; margin-top:15px;">← Back to Dashboard</a>
+</div>
+{% endblock %}

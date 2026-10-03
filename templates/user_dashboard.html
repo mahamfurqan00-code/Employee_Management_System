@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block title %}Browse Apps - Maham Project{% endblock %}
+{% block extra_style %}
+.filter-bar { display: flex; gap: 10px; margin-bottom: 5px; flex-wrap: wrap; }
+.filter-bar input, .filter-bar select { width: auto; flex: 1; min-width: 180px; margin: 0; }
+.result-count { font-size: 13px; color: var(--ink-soft); margin: 10px 0; }
+{% endblock %}
+{% block content %}
+<div class="card wide">
+    <h2>Browse Applications</h2>
+    <p class="subtitle">Pick an app to read existing reviews or submit your own for sentiment analysis.</p>
+
+    {% if apps %}
+    <div class="filter-bar">
+        <input type="text" id="searchBox" placeholder="Search apps by name..." onkeyup="filterApps()">
+        <select id="categoryFilter" onchange="filterApps()">
+            <option value="">All Categories</option>
+            {% for c in categories %}
+            <option value="{{ c }}">{{ c }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <p class="result-count" id="resultCount">{{ apps|length }} app(s)</p>
+
+    <div class="app-grid" id="appGrid">
+        {% for a in apps %}
+        {% set badge = get_app_badge(a) %}
+        <a href="{{ url_for('app_detail', app_id=a.id) }}" class="app-tile-link" data-name="{{ a.name|lower }}" data-category="{{ a.category or '' }}" style="text-decoration:none; color:inherit;">
+            <div class="app-tile">
+                <div class="app-badge" style="background:{{ badge.color }}; color:{{ badge.text or '#fff' }};"><span>{{ badge.icon }}</span>{% if a.image_url %}<img src="{{ a.image_url }}" alt="" onerror="this.remove()">{% endif %}</div>
+                <div style="display:flex; align-items:center; justify-content:space-between; gap:8px;">
+                    {% if a.category %}<span class="cat">{{ a.category }}</span>{% endif %}
+                    {% if a.rating is not none %}<span class="rating-tag">★ {{ "%.1f"|format(a.rating) }}</span>{% endif %}
+                </div>
+                <h3>{{ a.name }}</h3>
+                <p>{{ (a.description or "No description yet.")[:90] }}{% if a.description and a.description|length > 90 %}…{% endif %}</p>
+                {% if a.verdict == 'Fraud' %}<span class="status-fraud" style="margin-right:6px;">⚠ Flagged</span>{% elif a.verdict == 'Genuine' %}<span class="status-genuine" style="margin-right:6px;">✓ Verified</span>{% endif %}
+                <span class="review-count">{{ a.reviews|length }} comment{{ '' if a.reviews|length == 1 else 's' }}</span>
+            </div>
+        </a>
+        {% endfor %}
+    </div>
+    <div class="empty-state" id="noResults" style="display:none;">No apps match your search.</div>
+    {% else %}
+    <div class="empty-state">No applications have been added yet. Check back soon!</div>
+    {% endif %}
+</div>
+<script>
+    function filterApps() {
+        const search = document.getElementById('searchBox').value.toLowerCase();
+        const category = document.getElementById('categoryFilter').value;
+        const tiles = document.querySelectorAll('.app-tile-link');
+        let visibleCount = 0;
+        tiles.forEach(tile => {
+            const matchesSearch = tile.dataset.name.includes(search);
+            const matchesCategory = !category || tile.dataset.category === category;
+            const show = matchesSearch && matchesCategory;
+            tile.style.display = show ? '' : 'none';
+            if (show) visibleCount++;
+        });
+        document.getElementById('resultCount').textContent = visibleCount + ' app(s)';
+        document.getElementById('noResults').style.display = visibleCount === 0 ? 'block' : 'none';
+    }
+</script>
+{% endblock %}
