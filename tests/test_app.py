@@ -29,3 +29,11 @@ def test_database_url_overrides_default(monkeypatch):
     monkeypatch.setenv("DATABASE_URL", "sqlite:///custom.db")
 
     assert _database_uri() == "sqlite:///custom.db"
+
+
+def test_postgresql_database_urls_use_psycopg(monkeypatch):
+    monkeypatch.setenv("DATABASE_URL", "postgresql://user:pass@host/db?sslmode=require")
+    assert _database_uri() == "postgresql+psycopg://user:pass@host/db?sslmode=require"
+
+    monkeypatch.setenv("DATABASE_URL", "postgres://user:pass@host/db?sslmode=require")
+    assert _database_uri() == "postgresql+psycopg://user:pass@host/db?sslmode=require"

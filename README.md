@@ -94,9 +94,18 @@ The application will create its SQLite database automatically and add sample emp
 
 Import this repository into Vercel and deploy it from the project root. Vercel detects the Flask application in `app.py` and installs the packages listed in `requirements.txt`; no custom start command is needed.
 
-Vercel's application filesystem is not persistent. Without a `DATABASE_URL`, the app uses `/tmp/peopleops.db` on Vercel so it can start and display the dashboard, but data saved there may disappear and is not shared reliably between serverless instances. For persistent employee records, set `DATABASE_URL` in the Vercel project settings to a supported external database URL and include that database's SQLAlchemy driver in `requirements.txt`.
+To persist employee records with Neon:
 
-Set a unique `SECRET_KEY` in Vercel's environment variables before using the app beyond a demo.
+1. Create a PostgreSQL project in Neon and copy its pooled connection string. Use the pooled host and keep `sslmode=require` in the URL.
+2. In Vercel, open the project's **Settings → Environment Variables** and add `DATABASE_URL` with the Neon connection string. Do not commit the URL to this repository.
+3. Add a unique `SECRET_KEY` environment variable in the same Vercel settings.
+4. Redeploy the project so the new environment variables take effect.
+
+The app converts standard PostgreSQL URLs to use the included Psycopg driver. On startup it creates the employee table and sample records if the database is empty. Existing records in the local SQLite database are not automatically copied to Neon.
+
+Vercel's application filesystem is not persistent. Without `DATABASE_URL`, the app uses a temporary SQLite database to display the dashboard, but data saved there may disappear and is not shared reliably between serverless instances.
+
+Keep `SECRET_KEY` private and set it in Vercel's environment variables before using the app beyond a demo.
 
 ## API Endpoints
 
