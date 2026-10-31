@@ -90,6 +90,14 @@ http://127.0.0.1:5000
 
 The application will create its SQLite database automatically and add sample employee records on the first run.
 
+## Deploying on Vercel
+
+Import this repository into Vercel and deploy it from the project root. Vercel detects the Flask application in `app.py` and installs the packages listed in `requirements.txt`; no custom start command is needed.
+
+Vercel's application filesystem is not persistent. Without a `DATABASE_URL`, the app uses `/tmp/peopleops.db` on Vercel so it can start and display the dashboard, but data saved there may disappear and is not shared reliably between serverless instances. For persistent employee records, set `DATABASE_URL` in the Vercel project settings to a supported external database URL and include that database's SQLAlchemy driver in `requirements.txt`.
+
+Set a unique `SECRET_KEY` in Vercel's environment variables before using the app beyond a demo.
+
 ## API Endpoints
 
 The project also includes two simple API endpoints:

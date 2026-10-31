@@ -2,11 +2,25 @@ from flask import Flask, render_template, request, redirect, url_for, flash, jso
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import or_, func
 from datetime import date, datetime
+from pathlib import Path
+import tempfile
 import os, csv, io
 
 app=Flask(__name__)
-app.config.update(SECRET_KEY=os.environ.get("SECRET_KEY","change-me"), SQLALCHEMY_DATABASE_URI="sqlite:///peopleops.db", SQLALCHECHEMY_TRACK_MODIFICATIONS=False)
-app.config["SQLALCHEMY_TRACK_MODIFICATIONS"]=False
+def _database_uri():
+    database_url = os.environ.get("DATABASE_URL")
+    if database_url:
+        return database_url
+    if os.environ.get("VERCEL"):
+        database_path = (Path(tempfile.gettempdir()) / "peopleops.db").as_posix()
+        return f"sqlite:///{database_path}"
+    return "sqlite:///peopleops.db"
+
+app.config.update(
+    SECRET_KEY=os.environ.get("SECRET_KEY", "change-me"),
+    SQLALCHEMY_DATABASE_URI=_database_uri(),
+    SQLALCHEMY_TRACK_MODIFICATIONS=False,
+)
 db=SQLAlchemy(app)
 
 class Employee(db.Model):
